@@ -33,7 +33,7 @@ const Login = () => {
             {/* Login Card */}
             <div className="bg-white rounded-lg shadow-xl max-w-md w-full md:max-w-[500px] overflow-hidden">
                 {/* Logo and Header */}
-                <div className="flex p-4 transition-transform duration-500 items-center justify-center mb-1">
+                <div className="flex p-4 transition-transform duration-500 items-center justify-between mb-1">
                     <img src={logo} alt="Company Logo" className="h-1/2 w-1/2 mr-4" />
                     <h1 className="text-3xl font-semibold text-gray-800">
                         {isCreateAccount ? 'Create Account' : 'Welcome Back'}
@@ -41,7 +41,7 @@ const Login = () => {
                 </div>
 
                 {/* Form Container */}
-                <div className={`flex transition-transform duration-500 ${isCreateAccount ? 'transform translate-x-[-100%] flex-1' : ''}`}>
+                <div className={`flex transition-transform duration-700 ${isCreateAccount ? 'transform translate-x-[-100%] flex-1' : ''}`}>
                     {/* Login Form */}
                     <div className=" min-h-1 min-w-full p-3">
                         <form className="space-y-6">

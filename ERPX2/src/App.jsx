@@ -5,6 +5,7 @@ import Home from './pages/home'; // Ensure Home is correctly imported
 import Dashboard from './pages/dashboard'; // Import your Dashboard component
 import { Outlet } from 'react-router-dom';
 import Login from './pages/Login'
+import CurrencyMaster from './Components/CurrencyMaster'
 const Layout = () => (
   <>
     <Navbar />
@@ -14,15 +15,15 @@ const Layout = () => (
 
 const App = () => {
   return (
-    // <Router>
-    //   <Routes>
-    //     <Route element={<Layout />}>
-    //       <Route path="/" element={<Home />} />
-    //       <Route path="/Dashboard" element={<Dashboard />} />
-    //     </Route>
-    //   </Routes>
-    // </Router>
-    <Login />
+    <Router>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Login />} />
+          <Route path="/Dashboard" element={<Dashboard />} />
+        </Route>
+      </Routes>
+    </Router>
+    // <Login />
   );
 };
 

@@ -6,7 +6,7 @@ import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import logo from '../assets/images/logo/9dattaE.png';
 const Navbar = () => {
     const [active, setActive] = useState(null);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [searchText, setsearchText] = useState('')
     const handleMenuClick = (index) => {
         setActive((prev) => (prev === index ? null : index));
@@ -57,9 +57,9 @@ const Navbar = () => {
 
                                 {/* Sub-menu items */}
                                 {active === index && item.subMenu.length > 0 && (
-                                    <ul className="pl-6 space-y-2 animate-fade-slide">
+                                    <ul className="pl-6 space-y-2">
                                         {item.subMenu.map((subItem, subIndex) => (
-                                            <li key={subIndex} className="p-3 rounded-md bg-secondary hover:bg-accent transition duration-300 "
+                                            <li key={subIndex} className="p-3 rounded-md bg-secondary hover:bg-accent transition duration-300  animate-fade-slide"
                                             >
                                                 <Link to={subItem.path} className="flex items-center text-white">
                                                     <span clssName="text-xl mr-3">{subItem.subIcon}</span>
