@@ -46,7 +46,7 @@ const Login = () => {
                     <div className=" min-h-1 min-w-full p-3">
                         <form className="space-y-6">
                             <InputField
-                                id="username"
+                                id="Username"
                                 name="username"
                                 type="text"
                                 placeholder=" username"
@@ -54,7 +54,7 @@ const Login = () => {
                                 autoComplete="username"
                             />
                             <InputField
-                                id="password"
+                                id="Password"
                                 name="password"
                                 type="password"
                                 placeholder=" password"
@@ -62,7 +62,7 @@ const Login = () => {
                                 autoComplete="current-password"
                             />
                             <InputField
-                                id="date"
+                                id="Date"
                                 name="date"
                                 type="date"
                                 placeholder="date"
@@ -77,7 +77,7 @@ const Login = () => {
                     <div className="min-w-full p-3">
                         <form className="space-y-6">
                             <InputField
-                                id="name"
+                                id="Name"
                                 name="name"
                                 type="text"
                                 placeholder="Enter your name"

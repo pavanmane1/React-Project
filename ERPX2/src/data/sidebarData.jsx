@@ -34,8 +34,11 @@ export const Sidebardata = [
         icon: <MdOutlineManageAccounts />,
         sideIcon: <IoIosArrowDropdownCircle />,
         subMenu: [
-            { title: 'AC Master', path: '/account/master', subIcon: <MdSupervisorAccount />, subSideIcon: <IoMdArrowDropright /> },
-            { title: 'AC Sales', path: '/account/sales', subIcon: <MdSupervisorAccount />, subSideIcon: <IoMdArrowDropright /> },
+            { title: 'Currency Master', path: '/account/Currency', subIcon: <MdSupervisorAccount />, subSideIcon: <IoMdArrowDropright /> },
+            { title: 'Country Master', path: '/account/Country', subIcon: <MdSupervisorAccount />, subSideIcon: <IoMdArrowDropright /> },
+            { title: 'State Master', path: '/account/State', subIcon: <MdSupervisorAccount />, subSideIcon: <IoMdArrowDropright /> },
+            { title: 'City Master', path: '/account/City', subIcon: <MdSupervisorAccount />, subSideIcon: <IoMdArrowDropright /> },
+            { title: 'LocationMaster', path: '/account/LocationMaster', subIcon: <MdSupervisorAccount />, subSideIcon: <IoMdArrowDropright /> },
         ],
     },
     {

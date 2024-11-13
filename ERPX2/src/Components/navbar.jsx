@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom'; // Import Outlet
-import { Sidebardata } from './sidebarData';
+import { Sidebardata } from '../data/sidebarData';
 import { MdManageAccounts } from "react-icons/md";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import logo from '../assets/images/logo/9dattaE.png';
@@ -62,7 +62,7 @@ const Navbar = () => {
                                             <li key={subIndex} className="p-3 rounded-md bg-secondary hover:bg-accent transition duration-300  animate-fade-slide"
                                             >
                                                 <Link to={subItem.path} className="flex items-center text-white">
-                                                    <span clssName="text-xl mr-3">{subItem.subIcon}</span>
+                                                    <span className="text-xl mr-3">{subItem.subIcon}</span>
                                                     <span className="text-lg flex-grow ">{subItem.title}</span>
                                                     {subItem.subSideIcon && (
                                                         <span className="text-xl ml-3">{subItem.subSideIcon}</span>

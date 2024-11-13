@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import InputField from "../Components/inputfield";
-import currencyOptions from "../Components/currencydata";
+import currencyOptions from "../data/currencydata";
 import { FaSave, FaTimes } from 'react-icons/fa';
 import axios from 'axios'
 import { useEffect } from 'react';
@@ -20,7 +20,7 @@ const dashboard = () => {
   const [SelectedCurrency, setSelectedCurrency] = useState('')
   const [selectedCurrencySymbole, setSelectedCurrencySymbole] = useState('')
   useEffect(() => {
-    fetchCurrencyDetails();
+    // fetchCurrencyDetails();
   }, [])
 
   const fetchCurrencyDetails = async () => {
