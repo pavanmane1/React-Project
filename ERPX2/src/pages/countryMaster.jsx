@@ -32,14 +32,14 @@ const CountryMaster = () => {
 
     const fetchCurrencyDetails = async () => {
         try {
-            const response = await axios.get('https://192.168.1.38:8082/api/getcurrency');
-            const currencyData = response.data.rates;
-            const formattedCurrencies = Object.keys(currencyData).map((code) => ({
-                code,
-                rate: currencyData[code],
-            }));
+            const response = await axios.get('http://192.168.1.46:8080/test');
+            // const currencyData = response.data.rates;
+            // const formattedCurrencies = Object.keys(currencyData).map((code) => ({
+            //     code,
+            //     rate: currencyData[code],
+            // }));
             console.log(response.data)
-            setCurrencies(formattedCurrencies);
+            // setCurrencies(formattedCurrencies);
         } catch (error) {
             console.error('Error fetching currency data:', error);
         }

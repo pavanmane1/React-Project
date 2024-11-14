@@ -26,7 +26,7 @@ const CurrencyMaster = () => {
     const fetchCurrencyDetails = async () => {
         try {
             // Example URL - replace with a real endpoint for currency data
-            const response = await axios.get('https://192.168.1.38:8082/api/getcurrency');
+            const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
 
             // Process and extract the currency details from the response
             // const currencyData = response.data.rates; // Example structure, adjust as needed
@@ -34,9 +34,9 @@ const CurrencyMaster = () => {
             //     code,
             //     rate: currencyData[code],
             // }));
-
-            console.log(currencyData);
-            setCurrencies(formattedCurrencies);
+            console.log("response");
+            console.log(response.data);
+            // setCurrencies(formattedCurrencies);
         } catch (error) {
             if (error.response) {
                 // The request was made and the server responded with a status code
@@ -64,12 +64,14 @@ const CurrencyMaster = () => {
         }
     }
     return (
+
         <div className='rounded-md p-4'>
             <div className="flex justify-center items-center mb-8">
                 <h1 className="text-gray-900  text-shadow-sm font-semibold text-3xl sm:text-4xl md:text-3xl lg:text-3xl text-center leading-tight tracking-wide transition-all duration-500 ease-in-out transform hover:scale-105">
                     Currency Master
                 </h1>
             </div>
+
 
             <div className='flex justify-center'>
                 <div className="w-full sm:w-4/5 md:w-1/2 lg:w-1/3 xl:w-1/3 shadow-lg bg-white p-3 rounded-xl">
