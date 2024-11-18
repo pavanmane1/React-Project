@@ -10,6 +10,11 @@ import CountryStateCity from './pages/Countrystatecity'
 import CountryMaster from './pages/countryMaster'
 import CountrywiseCourrency from './pages/CountryWiseCurrency'
 import PaginatedTable from './pages/pagination'
+import { Provider } from 'react-redux';
+import CounterDisplay from './pages/counter';
+import CounterControls from './pages/counterController'
+import store from './store';
+
 const Layout = () => (
   <>
     <Navbar />
@@ -141,18 +146,23 @@ const data = [
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Login />} />
-          <Route path="/Dashboard" element={<PaginatedTable data={data} itemsPerPage={10} />} />
-          <Route path="/account/Currency" element={<CurrencyMaster />} />
-          <Route path="/account/Country" element={<CountrywiseCourrency />} />
-          <Route path="/account/LocationMaster" element={<CountryStateCity />} />
-        </Route>
-      </Routes>
-    </Router>
-    // <Login />
+    <Provider store={store}>
+      <Router>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Login />} />
+            <Route path="/Dashboard" element={<PaginatedTable data={data} itemsPerPage={10} />} />
+            <Route path="/account/Currency" element={<CurrencyMaster />} />
+            <Route path="/account/Country" element={<CountrywiseCourrency />} />
+            <Route path="/account/LocationMaster" element={<CountryStateCity />} />
+          </Route>
+        </Routes>
+      </Router>
+
+      {/* <CounterDisplay />
+      <CounterControls /> */}
+
+    </Provider>
   );
 };
 

@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 const textShadowPlugin = require('tailwindcss-textshadow');
+
 export default {
   content: [
     "./index.html",
@@ -20,14 +21,25 @@ export default {
           100: '#f1f3f5', // Define light gray color
         },
       },
+      animation: {
+        slideInLeft: 'slideInLeft 0.5s ease-in-out', // Add the slideInLeft animation
+      },
       keyframes: {
+        slideInLeft: {
+          '0%': {
+            transform: 'translateX(-100%)', // Start position (offscreen right)
+          },
+          '100%': {
+            transform: 'translateX(0)', // End position (onscreen)
+          },
+        },
         fadeSlide: {
           '0%': { opacity: '0.5', transform: 'translateY(10px)' },
           '100%': { opacity: '1', transform: 'translateY(1)' },
         },
       },
       animation: {
-        'fade-slide': 'fadeSlide 0.3s ease-in-out',
+        'fade-slide': 'fadeSlide 0.4s ease-in-out',
       },
 
     },

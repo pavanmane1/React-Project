@@ -103,7 +103,7 @@ const Navbar = () => {
                     </div>
                 </div>
                 {/* Render routed content */}
-                <div className="pt-20 p-5 bg-background">
+                <div className="pt-14 p-4 bg-background">
                     <Outlet />
                 </div>
 

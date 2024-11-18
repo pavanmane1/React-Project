@@ -1,71 +1,94 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setCurrentPage } from '../slice/PaginationSlice';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import styles from '../styles/styles';
+import { fetchCurrencies, setSelectedCurrency } from '../slice/currencySlice';
 
-const PaginatedTable = ({ data, itemsPerPage }) => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = Math.ceil(data.length / itemsPerPage);
+const PaginatedTable = () => {
+    const dispatch = useDispatch();
+    const { currencies, status, error, editCurrencydata } = useSelector((state) => state.currency);
 
+    useEffect(() => {
+        if (status === 'idle') {
+            dispatch(fetchCurrencies());
+        }
+    }, [status, dispatch]);
+
+    const oneditClicked = (item) => {
+        dispatch(setSelectedCurrency({
+            id: item.id,
+            currency: item.currency,
+            symbol: item.symbol,
+            showpopup: true
+        }));
+    }
+    // Access Redux state
+    const { currentPage, itemsPerPage } = useSelector((state) => state.pagination);
+
+    const totalPages = Math.ceil(currencies.length / itemsPerPage);
     const pagesToShow = 10;
     const startPage = Math.floor((currentPage - 1) / pagesToShow) * pagesToShow + 1;
     const endPage = Math.min(startPage + pagesToShow - 1, totalPages);
 
-    const currentData = data.slice(
+    const currentData = currencies.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
 
     const changePage = (page) => {
         if (page > 0 && page <= totalPages) {
-            setCurrentPage(page);
+            dispatch(setCurrentPage(page));
         }
     };
 
     const changePageBy10 = (direction) => {
-        const newPage = direction === 'next'
-            ? Math.min(currentPage + pagesToShow, totalPages)
-            : Math.max(currentPage - pagesToShow, 1);
-        setCurrentPage(newPage);
+        const newPage =
+            direction === 'next'
+                ? Math.min(currentPage + pagesToShow, totalPages)
+                : Math.max(currentPage - pagesToShow, 1);
+        dispatch(setCurrentPage(newPage));
     };
 
     const goToPrevious = () => {
         if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
+            dispatch(setCurrentPage(currentPage - 1));
         }
     };
 
     const goToNext = () => {
         if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
+            dispatch(setCurrentPage(currentPage + 1));
         }
     };
 
     return (
-        <div className="p-6 bg-white rounded-lg shadow-lg min-w-1/3">
-            {/* Table Header */}
-            <table className="min-w-full bg-white rounded-lg shadow-md border-collapse overflow-hidden hidden md:table">
-                <thead className="bg-gray-100 border-b">
+        <div className={styles.utility.tableContainerStyle}>
+            {/* Table */}
+            <table className={styles.utility.table}>
+                <thead className={styles.utility.tableHeader}>
                     <tr>
-                        <th className="py-3 px-6 text-left text-sm font-semibold text-gray-600">ID</th>
-                        <th className="py-3 px-6 text-left text-sm font-semibold text-gray-600">Name</th>
-                        <th className="py-3 px-6 text-left text-sm font-semibold text-gray-600">Email</th>
-                        <th className="py-3 px-6 text-left text-sm font-semibold text-gray-600">Actions</th>
+                        <th className={styles.utility.teableheadingText}>Sr No</th>
+                        <th className={styles.utility.teableheadingText}>Currency</th>
+                        <th className={styles.utility.teableheadingText}>Symbol</th>
+                        <th className={styles.utility.teableheadingText}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {currentData.map((item) => (
-                        <tr key={item.id} className="border-b hover:bg-gray-50 transition-colors duration-200">
-                            <td className="py-4 px-6 text-sm text-gray-800">{item.id}</td>
-                            <td className="py-4 px-6 text-sm text-gray-800">{item.name}</td>
-                            <td className="py-4 px-6 text-sm text-gray-800">{item.email}</td>
-                            <td className="py-4 px-6 text-sm text-gray-800">
-                                <div className="flex space-x-2">
-                                    <button className="flex items-center justify-center p-2 rounded-lg bg-gray-500 text-blue-500 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out shadow-md hover:shadow-lg active:scale-95">
+                    {currentData.map((item, index) => (
+                        <tr key={item.id} className={styles.utility.tableRow}>
+                            <td className={styles.utility.tableCellTd}>
+                                {(currentPage - 1) * itemsPerPage + index + 1}
+                            </td>
+                            <td className={styles.utility.tableCellTd}>{item.currency}</td>
+                            <td className={styles.utility.tableCellTd}>{item.symbol}</td>
+                            <td className={styles.utility.tableCellTd}>
+                                <div className={styles.utility.tableAction}>
+                                    <button className={styles.utility.tableActionButtons} onClick={() => oneditClicked(item)}>
                                         <FaEdit className="text-sm" />
-                                        <span className="sr-only">Edit</span>
                                     </button>
-                                    <button className="flex items-center justify-center p-2 rounded-lg bg-gray-600 text-red-500 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200 ease-in-out shadow-md hover:shadow-lg active:scale-95">
+                                    <button className={styles.utility.tableActionButtons}>
                                         <FaTrashAlt className="text-sm" />
-                                        <span className="sr-only">Delete</span>
                                     </button>
                                 </div>
                             </td>
@@ -73,17 +96,16 @@ const PaginatedTable = ({ data, itemsPerPage }) => {
                     ))}
                 </tbody>
             </table>
-
             {/* Mobile View Card Format */}
             <div className="md:hidden">
                 {currentData.map((item) => (
                     <div key={item.id} className="mb-4 p-4 border rounded-lg shadow-md hover:shadow-lg transition-all w-full">
                         <div className="flex justify-between items-center text-xs">
                             <div>
-                                <h3 className="text-sm font-semibold text-gray-700">{item.name}</h3>
-                                <p className="text-xs text-gray-500">{item.email}</p>
+                                <h3 className="text-sm font-semibold text-gray-700">{item.currency}</h3>
+                                <p className="text-xs text-gray-500">{item.symbol}</p>
                             </div>
-                            <div className="flex space-x-2">
+                            <div className="flex space-x-2 justify-center items-center">
                                 <button className="p-2 bg-gray-500 text-blue-500 rounded-lg hover:text-blue-700">
                                     <FaEdit className="text-sm" />
                                 </button>
@@ -98,59 +120,60 @@ const PaginatedTable = ({ data, itemsPerPage }) => {
 
             {/* Pagination Controls */}
             <div className="mt-6 flex flex-wrap items-center justify-center space-x-2">
-                <div className="flex items-center space-x-2 mb-2 sm:mb-0">
-                    {/* Previous 10 button, visible only on large screens */}
-                    <button
-                        onClick={() => changePageBy10('previous')}
-                        disabled={currentPage <= pagesToShow}
-                        className="px-3 py-1 bg-indigo-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200 hidden sm:inline"
-                    >
-                        Previous 10
-                    </button>
-                    {/* Previous button */}
-                    <button
-                        onClick={goToPrevious}
-                        disabled={currentPage === 1}
-                        className="px-3 py-1 bg-indigo-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200"
-                    >
-                        Previous
-                    </button>
-                </div>
+                {/* Previous 10 button (visible only on larger screens) */}
+                <button
+                    onClick={() => changePageBy10('previous')}
+                    disabled={currentPage <= pagesToShow}
+                    className="px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200 hidden sm:inline"
+                    aria-label="Previous 10 pages"
+                >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M14 7l-5 5 5 5V7z"></path></svg>
+                </button>
 
+                {/* Previous button */}
+                <button
+                    onClick={goToPrevious}
+                    disabled={currentPage === 1}
+                    className="px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200"
+                    aria-label="Previous page"
+                >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7v14z"></path></svg>
+                </button>
+
+                {/* Page number buttons */}
                 <div className="flex items-center space-x-2 mb-2 sm:mb-0">
-                    {/* Page number buttons */}
                     {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
                         <button
                             key={startPage + index}
                             onClick={() => changePage(startPage + index)}
-                            className={`px-3 py-1 text-xs sm:text-sm font-semibold rounded-lg transition duration-200 ${currentPage === startPage + index ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+                            className={`px-3 py-2 text-xs sm:text-sm font-semibold rounded-lg transition duration-200 ${currentPage === startPage + index ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+                            aria-label={`Page ${startPage + index}`}
                         >
                             {startPage + index}
                         </button>
                     ))}
                 </div>
 
-                <div className="flex items-center space-x-2">
-                    {/* Next button */}
-                    <button
-                        onClick={goToNext}
-                        disabled={currentPage === totalPages}
-                        className="px-3 py-1 bg-indigo-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200"
-                    >
-                        Next
-                    </button>
-                    {/* Next 10 button, visible only on large screens */}
-                    <button
-                        onClick={() => changePageBy10('next')}
-                        disabled={currentPage + pagesToShow > totalPages}
-                        className="px-3 py-1 bg-indigo-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200 hidden sm:inline"
-                    >
-                        Next 10
-                    </button>
-                </div>
+                {/* Next button */}
+                <button
+                    onClick={goToNext}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200"
+                    aria-label="Next page"
+                >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7V5z"></path></svg>
+                </button>
+
+                {/* Next 10 button (visible only on larger screens) */}
+                <button
+                    onClick={() => changePageBy10('next')}
+                    disabled={currentPage + pagesToShow > totalPages}
+                    className="px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200 hidden sm:inline"
+                    aria-label="Next 10 pages"
+                >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"></path></svg>
+                </button>
             </div>
-
-
         </div>
     );
 };
