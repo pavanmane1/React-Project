@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchCurrencies, addCurrency } from '../slice/currencySlice';
+import { fetchCurrencies, addCurrency, selectCurrencyData, editSelectedCurrency, editCurrencyapi, deleteCurrency, deleteSelectedCurrency } from '../slice/currencySlice';
 import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import currencyOptions from '../data/currencydata';
@@ -11,40 +11,37 @@ import SaveCancelButton from '../Components/buttons/SaveCancelButton';
 import styles from '../styles/styles';
 import CurrencyModal from '../Components/modal';
 import Modal from '../Components/modals/modal';
+import TextInputTopLabel from '../Components/Inputs/InputWithTopLabel';
+
 const CurrencyMaster = () => {
     const dispatch = useDispatch();
-    const { status, error, editCurrencydata } = useSelector((state) => state.currency);
-    const [isModalOpen, setIsModalOpen] = useState(true);
-    const [selectedCurrency, setSelectedCurrency] = useState('');
-    const [selectedCurrencySymbol, setSelectedCurrencySymbol] = useState('');
+    const { status, error, editCurrencydata, CurrencySelectionData, deleteCurrencyData, } = useSelector((state) => state.currency);
     const { id, currency, symbol, showpopup } = editCurrencydata;
+    const { selectedCurrencyCode, selectedCurrencySymbol } = CurrencySelectionData;
+    const { currencyId, showDeletePopup } = deleteCurrencyData;
+    let updatedData
 
     const handleChange = (e) => {
         const selectedCurrencyCode = e.target.value;
-        setSelectedCurrency(selectedCurrencyCode);
-
         const selectedCurrencyData = currencyOptions.find((currency) => currency.code === selectedCurrencyCode);
-        setSelectedCurrencySymbol(selectedCurrencyData ? selectedCurrencyData.symbol : '');
+        dispatch(selectCurrencyData({
+            selectedCurrencyCode: selectedCurrencyCode,
+            selectedCurrencySymbol: selectedCurrencyData ? selectedCurrencyData.symbol : ''
+
+        }));
     };
 
-    const handleClose = () => setIsModalOpen(false);
+
+    const handleClose = () => {
+        dispatch(editSelectedCurrency({
+            showpopup: false
+        }));
+    };
     const handleSave = async (e) => {
         e.preventDefault();
-        setIsModalOpen(false);
-        if (!selectedCurrency || !selectedCurrencySymbol) {
-            toast.error('Please select a currency before saving.');
-            return;
-        }
-
-        const newCurrency = {
-            currency: selectedCurrency,
-            symbol: selectedCurrencySymbol,
-        };
-
-        try {
-            await dispatch(addCurrency(newCurrency)).unwrap();
-            toast.success('Success! Data saved.', {
-                position: 'top-center',
+        if (!selectedCurrencyCode || !selectedCurrencySymbol) {
+            toast.error('Please select a currency before saving.', {
+                position: 'top-right',
                 autoClose: 5000,
                 hideProgressBar: false,
                 closeOnClick: true,
@@ -54,8 +51,33 @@ const CurrencyMaster = () => {
                 theme: 'colored',
                 transition: Bounce,
             });
-            setSelectedCurrency('');
-            setSelectedCurrencySymbol('');
+            return;
+        }
+
+        const newCurrency = {
+            currency: selectedCurrencyCode,
+            symbol: selectedCurrencySymbol,
+        };
+
+        try {
+            await dispatch(addCurrency(newCurrency)).unwrap();
+            toast.success(' New Currency Added Success!', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'colored',
+                transition: Bounce,
+            });
+            dispatch(selectCurrencyData({
+                selectedCurrencyCode: '',
+                selectedCurrencySymbol: ''
+
+            }));
+
         } catch (error) {
             toast.error(`Error: ${error}`, {
                 position: 'top-right',
@@ -70,14 +92,111 @@ const CurrencyMaster = () => {
             });
         }
     };
+    const handleEditChange = useCallback((e) => {
+        const { name, value } = e.target;
 
-    const handleCancel = () => {
-        // Close the modal or reset the form as needed
+        const updatedData = {
+            ...editCurrencydata, // Immutable state update
+            [name]: value,
+        };
+
+        // Basic validation
+        if (!updatedData.currency || !updatedData.symbol) {
+            console.warn('Currency and Symbol are required!');
+            return;
+        }
+
+        // Dispatch updated data to Redux store
+        dispatch(editSelectedCurrency(updatedData));
+
+        // Optionally, log the updated data, but be mindful to remove in production
+        console.log('Edited Data:', updatedData);
+    }, [dispatch, editCurrencydata]); // Use the dependencies carefully
+
+    const handleEdit = async (e) => {
+        e.preventDefault();
+
+        // Prepare the updated data
+        const updatedData = {
+            id, // Ensure the ID is included for updating
+            currency,
+            symbol,
+            showpopup: false, // Explicitly set showpopup to false
+        };
+
+        try {
+            // Dispatch the edit action to update the currency
+            await dispatch(editCurrencyapi(updatedData)).unwrap();
+            await dispatch(fetchCurrencies()).unwrap();
+            dispatch(editSelectedCurrency({ showpopup: false }));
+            toast.success('Currency Updated Successfully!', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'colored',
+                transition: Bounce,
+            });
+
+        } catch (error) {
+            // Show error notification
+            toast.error(`Error: ${error}`, {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'colored',
+                transition: Bounce,
+            });
+        }
     };
+    const handleDelete = async (e) => {
+        e.preventDefault();
+        try {
+            // Dispatch the edit action to update the currency
+            await dispatch(deleteCurrency(currencyId)).unwrap();
+            await dispatch(fetchCurrencies()).unwrap();
+            dispatch(deleteSelectedCurrency({ showDeletePopup: false }));
+            toast.success('Currency Deleted Successfully!', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'colored',
+                transition: Bounce,
+            });
 
-    if (status === 'loading') {
-        return <div>Loading...</div>;
+        } catch (error) {
+            // Show error notification
+            toast.error(`Error: ${error}`, {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'colored',
+                transition: Bounce,
+            });
+        }
     }
+    const handleCancel = () => {
+        dispatch(selectCurrencyData({
+            selectedCurrencyCode: '',
+            selectedCurrencySymbol: ''
+
+        }));
+    };
 
     if (status === 'failed') {
         return <div>Error: {error}</div>;
@@ -85,20 +204,22 @@ const CurrencyMaster = () => {
 
     return (
         <div>
-            <h4 className={styles.utility.titleTextStyle}>Currency Master</h4>
+            {console.log(showDeletePopup)}
+
+            {console.log(currencyId)}
             <div className={styles.utility.centerStyle}>
                 <div className={styles.utility.shadowContainer}>
                     <form className={styles.utility.formComponentSpacing} onSubmit={handleSave}>
                         <Dropdown
                             label="Currency"
-                            selectedCurrency={selectedCurrency}
+                            selectedCurrency={selectedCurrencyCode}
                             currencyOptions={currencyOptions}
                             onChange={handleChange}
                         />
                         <TextInput
                             label="Symbol"
                             type="text"
-                            value={selectedCurrencySymbol}
+                            value={selectedCurrencySymbol || ''}
                             placeholder="Symbol"
                             isReadOnly={true}
                         />
@@ -106,60 +227,50 @@ const CurrencyMaster = () => {
                     </form>
                 </div>
             </div>
-
+            <PaginatedTable itemsPerPage={10} />
+            <ToastContainer />
             {/* Conditionally Render the CurrencyModal */}
-            {showpopup ? (
+            {showpopup &&
                 <Modal
-                    isOpen={isModalOpen}
+                    isOpen={showpopup}
                     title="Edit Currency"
                     onClose={handleClose}
-                    onSubmit={handleSave}
+                    onSubmit={handleEdit}
                     cancelText="Cancel"
                     submitText="Save"
                 >
                     <form className="space-y-6">
-                        {/* Input: Currency */}
-                        <div>
-                            <label
-                                htmlFor="currency"
-                                className="block text-sm font-medium text-gray-900"
-                            >
-                                Currency
-                            </label>
-                            <input
-                                id="currency"
-                                type="text"
-                                value={currency}
-                                placeholder="Currency"
-                                className="w-full block p-2 border text-black border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-150"
-                                readOnly
-                            />
-                        </div>
+                        <TextInputTopLabel
+                            id="currency"
+                            label="Currency"
+                            name="currency"
+                            value={currency || ''}
+                            onChange={handleEditChange}
+                            placeholder="Currency"
+                        />
 
-                        {/* Input: Symbol */}
-                        <div>
-                            <label
-                                htmlFor="symbol"
-                                className="block text-sm font-medium text-gray-900"
-                            >
-                                Symbol
-                            </label>
-                            <input
-                                id="symbol"
-                                type="text"
-                                value={symbol}
-                                onChange={(e) => setSymbol(e.target.value)}
-                                placeholder="Symbol"
-                                className="w-full block p-2 border text-black border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-150"
-                            />
-                        </div>
+                        <TextInputTopLabel
+                            id="symbol"
+                            label="Symbol"
+                            name="symbol"
+                            value={symbol || ''}
+                            onChange={handleEditChange}
+                            placeholder="Symbol"
+                        />
                     </form>
-                </Modal>
-
-            ) : <PaginatedTable itemsPerPage={10} />}
-
-
-            <ToastContainer />
+                </Modal>}
+            {
+                showDeletePopup && (<Modal
+                    isOpen={showDeletePopup}
+                    title="Delete Currency"
+                    onClose={handleClose}
+                    onSubmit={handleDelete}
+                    cancelText="Cancel"
+                    submitText="Delete"
+                >
+                    <p className='text-black'>Are You want to delete Record ?</p>
+                </Modal>)
+            }
         </div>
     );
 };

@@ -41,7 +41,7 @@ const TextInput = React.memo(({
 TextInput.propTypes = {
     label: PropTypes.string.isRequired,
     type: PropTypes.string,
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     placeholder: PropTypes.string,
     isReadOnly: PropTypes.bool,
     onChange: PropTypes.func,

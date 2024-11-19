@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setCurrentPage } from '../slice/PaginationSlice';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import styles from '../styles/styles';
-import { fetchCurrencies, setSelectedCurrency } from '../slice/currencySlice';
+import { fetchCurrencies, editSelectedCurrency, deleteSelectedCurrency } from '../slice/currencySlice';
 
 const PaginatedTable = () => {
     const dispatch = useDispatch();
@@ -16,12 +16,19 @@ const PaginatedTable = () => {
     }, [status, dispatch]);
 
     const oneditClicked = (item) => {
-        dispatch(setSelectedCurrency({
+        dispatch(editSelectedCurrency({
             id: item.id,
             currency: item.currency,
             symbol: item.symbol,
             showpopup: true
         }));
+    }
+    const ondeleteClicked = (id) => {
+        dispatch(deleteSelectedCurrency({
+            currencyId: id,
+            showDeletePopup: true
+        }));
+
     }
     // Access Redux state
     const { currentPage, itemsPerPage } = useSelector((state) => state.pagination);
@@ -65,6 +72,8 @@ const PaginatedTable = () => {
     return (
         <div className={styles.utility.tableContainerStyle}>
             {/* Table */}
+            <h4 className={styles.utility.titleTextStyle}>Currency Master</h4>
+
             <table className={styles.utility.table}>
                 <thead className={styles.utility.tableHeader}>
                     <tr>
@@ -76,7 +85,7 @@ const PaginatedTable = () => {
                 </thead>
                 <tbody>
                     {currentData.map((item, index) => (
-                        <tr key={item.id} className={styles.utility.tableRow}>
+                        <tr key={(currentPage - 1) * itemsPerPage + index + 1} className={styles.utility.tableRow}>
                             <td className={styles.utility.tableCellTd}>
                                 {(currentPage - 1) * itemsPerPage + index + 1}
                             </td>
@@ -87,7 +96,7 @@ const PaginatedTable = () => {
                                     <button className={styles.utility.tableActionButtons} onClick={() => oneditClicked(item)}>
                                         <FaEdit className="text-sm" />
                                     </button>
-                                    <button className={styles.utility.tableActionButtons}>
+                                    <button className={styles.utility.tableActionButtons} onClick={() => ondeleteClicked(item.id)}>
                                         <FaTrashAlt className="text-sm" />
                                     </button>
                                 </div>
@@ -98,8 +107,8 @@ const PaginatedTable = () => {
             </table>
             {/* Mobile View Card Format */}
             <div className="md:hidden">
-                {currentData.map((item) => (
-                    <div key={item.id} className="mb-4 p-4 border rounded-lg shadow-md hover:shadow-lg transition-all w-full">
+                {currentData.map((item, index) => (
+                    <div key={(currentPage - 1) * itemsPerPage + index + 1} className="mb-4 p-4 border rounded-lg shadow-md hover:shadow-lg transition-all w-full">
                         <div className="flex justify-between items-center text-xs">
                             <div>
                                 <h3 className="text-sm font-semibold text-gray-700">{item.currency}</h3>

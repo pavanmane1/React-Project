@@ -32,11 +32,11 @@ export const addCurrency = createAsyncThunk(
 );
 
 // Edit currency
-export const editCurrency = createAsyncThunk(
+export const editCurrencyapi = createAsyncThunk(
     'currency/editCurrency',
-    async (currencyData, { rejectWithValue }) => {
+    async (updatedData, { rejectWithValue }) => {
         try {
-            const response = await axios.put(`${BASE_URL}/addcurrency`, currencyData);
+            const response = await axios.put(`${BASE_URL}/updatecurrency`, updatedData);
             return response.data; // Assuming response returns the updated currency data
         } catch (error) {
             // Handle errors and return a custom error message
@@ -44,8 +44,17 @@ export const editCurrency = createAsyncThunk(
         }
     }
 );
+export const deleteCurrency = createAsyncThunk('currency/deleteCurrency', async (currencyId, { rejectWithValue }) => {
+    try {
+        const response = await axios.delete(`${BASE_URL}/deletecurrency?id=${currencyId}`)
+        return response.data
+    } catch (e) {
+        return rejectWithValue(error.response ? error.response.data : error.message)
+    }
+})
 
-
+//updatecurrency
+//deletecurrency
 const currencySlice = createSlice({
     name: 'currency',
     initialState: {
@@ -53,28 +62,52 @@ const currencySlice = createSlice({
         status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
         error: null,
         addCurrencyError: null,
+        deleteCurrencyError: null,
         editCurrencyError: null,
-        editCurrencydata: [{
+        CurrencySelectionData: {
+            selectedCurrencyCode: '',
+            selectedCurrencySymbol: '',
+        },
+
+        editCurrencydata: {
             id: null,
             currency: null,
             symbol: null,
             showpopup: false
-        }]
+        },
+        deleteCurrencyData: {
+            currencyId: null,
+            showDeletePopup: false
+        }
+
     },
     reducers: {
         // Optional: You can add synchronous actions here if needed (e.g., resetting errors)
         resetErrors: (state) => {
             state.addCurrencyError = null;
             state.editCurrencyError = null;
+            state.deleteCurrencyError = null;
         },
-        setSelectedCurrency(state, action) {
+        editSelectedCurrency(state, action) {
             state.editCurrencydata = {
                 id: action.payload.id,
                 currency: action.payload.currency,
                 symbol: action.payload.symbol,
                 showpopup: action.payload.showpopup
             };
-        }
+        },
+        selectCurrencyData(state, action) {
+            state.CurrencySelectionData = {
+                selectedCurrencyCode: action.payload.selectedCurrencyCode,
+                selectedCurrencySymbol: action.payload.selectedCurrencySymbol,
+            }
+        },
+        deleteSelectedCurrency(state, action) {
+            state.deleteCurrencyData = {
+                currencyId: action.payload.currencyId,
+                showDeletePopup: action.payload.showDeletePopup
+            };
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -103,20 +136,32 @@ const currencySlice = createSlice({
             })
 
             // Edit currency
-            .addCase(editCurrency.pending, (state) => {
+            .addCase(editCurrencyapi.pending, (state) => {
                 state.editCurrencyError = null;
 
             })
-            .addCase(editCurrency.fulfilled, (state, action) => {
-
+            .addCase(editCurrencyapi.fulfilled, (state, action) => {
+                state.status = 'succeeded';
 
             })
-            .addCase(editCurrency.rejected, (state, action) => {
+            .addCase(editCurrencyapi.rejected, (state, action) => {
                 state.editCurrencyError = action.payload || "failed to edit currency";
+            })
+            // delete currency
+            .addCase(deleteCurrency.pending, (state) => {
+                state.deleteCurrencyError = null;
+
+            })
+            .addCase(deleteCurrency.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+
+            })
+            .addCase(deleteCurrency.rejected, (state, action) => {
+                state.deleteCurrencyError = action.payload || "failed to edit currency";
             })
     },
 });
 
-export const { resetErrors, setSelectedCurrency } = currencySlice.actions;
+export const { resetErrors, editSelectedCurrency, selectCurrencyData, deleteSelectedCurrency } = currencySlice.actions;
 
 export default currencySlice.reducer;
