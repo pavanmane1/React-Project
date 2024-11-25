@@ -108,6 +108,10 @@ const currencySlice = createSlice({
                 showDeletePopup: action.payload.showDeletePopup
             };
         },
+        resetPopups(state) {
+            state.editCurrencydata.showpopup = false;
+            state.deleteCurrencyData.showDeletePopup = false;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -162,6 +166,6 @@ const currencySlice = createSlice({
     },
 });
 
-export const { resetErrors, editSelectedCurrency, selectCurrencyData, deleteSelectedCurrency } = currencySlice.actions;
+export const { resetErrors, editSelectedCurrency, selectCurrencyData, deleteSelectedCurrency, resetPopups } = currencySlice.actions;
 
 export default currencySlice.reducer;

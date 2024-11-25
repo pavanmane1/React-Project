@@ -70,34 +70,32 @@ const PaginatedTable = () => {
     };
 
     return (
-        <div className={styles.utility.tableContainerStyle}>
+        <div className={styles.tableStyles.tableContainerStyle}>
             {/* Table */}
-            <h4 className={styles.utility.titleTextStyle}>Currency Master</h4>
-
-            <table className={styles.utility.table}>
-                <thead className={styles.utility.tableHeader}>
+            <table className={styles.tableStyles.table}>
+                <thead className={styles.tableStyles.tableHeader}>
                     <tr>
-                        <th className={styles.utility.teableheadingText}>Sr No</th>
-                        <th className={styles.utility.teableheadingText}>Currency</th>
-                        <th className={styles.utility.teableheadingText}>Symbol</th>
-                        <th className={styles.utility.teableheadingText}>Actions</th>
+                        <th className={styles.tableStyles.teableheadingText}>Sr No</th>
+                        <th className={styles.tableStyles.teableheadingText}>Currency</th>
+                        <th className={styles.tableStyles.teableheadingText}>Symbol</th>
+                        <th className={styles.tableStyles.teableheadingText}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {currentData.map((item, index) => (
-                        <tr key={(currentPage - 1) * itemsPerPage + index + 1} className={styles.utility.tableRow}>
-                            <td className={styles.utility.tableCellTd}>
+                        <tr key={(currentPage - 1) * itemsPerPage + index + 1} className={styles.tableStyles.tableRow}>
+                            <td className={styles.tableStyles.tableCellTd}>
                                 {(currentPage - 1) * itemsPerPage + index + 1}
                             </td>
-                            <td className={styles.utility.tableCellTd}>{item.currency}</td>
-                            <td className={styles.utility.tableCellTd}>{item.symbol}</td>
-                            <td className={styles.utility.tableCellTd}>
-                                <div className={styles.utility.tableAction}>
-                                    <button className={styles.utility.tableActionButtons} onClick={() => oneditClicked(item)}>
-                                        <FaEdit className="text-sm" />
+                            <td className={styles.tableStyles.tableCellTd}>{item.currency}</td>
+                            <td className={styles.tableStyles.tableCellTd}>{item.symbol}</td>
+                            <td className={styles.tableStyles.tableCellTd}>
+                                <div className={styles.tableStyles.tableAction}>
+                                    <button className={styles.tableStyles.tableActionButtons} onClick={() => oneditClicked(item)}>
+                                        <FaEdit className={styles.tableStyles.tableActionButtonText} />
                                     </button>
-                                    <button className={styles.utility.tableActionButtons} onClick={() => ondeleteClicked(item.id)}>
-                                        <FaTrashAlt className="text-sm" />
+                                    <button className={styles.tableStyles.tableActionButtons} onClick={() => ondeleteClicked(item.id)}>
+                                        <FaTrashAlt className={styles.tableStyles.tableActionButtonText} />
                                     </button>
                                 </div>
                             </td>
@@ -106,34 +104,33 @@ const PaginatedTable = () => {
                 </tbody>
             </table>
             {/* Mobile View Card Format */}
-            <div className="md:hidden">
+            <div className={styles.cardStyle.cardContainerOnMediumSize}>
                 {currentData.map((item, index) => (
-                    <div key={(currentPage - 1) * itemsPerPage + index + 1} className="mb-4 p-4 border rounded-lg shadow-md hover:shadow-lg transition-all w-full">
-                        <div className="flex justify-between items-center text-xs">
+                    <div key={(currentPage - 1) * itemsPerPage + index + 1} className={styles.cardStyle.cardContainer}>
+                        <div className={styles.cardStyle.cardContent}>
                             <div>
-                                <h3 className="text-sm font-semibold text-gray-700">{item.currency}</h3>
-                                <p className="text-xs text-gray-500">{item.symbol}</p>
+                                <h3 className={styles.cardStyle.cardContentHeading}>{item.currency}</h3>
+                                <p className={styles.cardStyle.cardContentText}>{item.symbol}</p>
                             </div>
-                            <div className="flex space-x-2 justify-center items-center">
-                                <button className="p-2 bg-gray-500 text-blue-500 rounded-lg hover:text-blue-700">
-                                    <FaEdit className="text-sm" />
+                            <div className={styles.cardStyle.cardActionContainer}>
+                                <button className={styles.cardStyle.cardActionButton}>
+                                    <FaEdit className={styles.cardStyle.cardButtonText} />
                                 </button>
-                                <button className="p-2 bg-gray-600 text-red-500 rounded-lg hover:text-red-700">
-                                    <FaTrashAlt className="text-sm" />
+                                <button className={styles.cardStyle.cardActionButton}>
+                                    <FaTrashAlt className={styles.cardStyle.cardButtonText} />
                                 </button>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
-
             {/* Pagination Controls */}
-            <div className="mt-6 flex flex-wrap items-center justify-center space-x-2">
+            <div className={styles.tableStyles.tablePaginationContainer}>
                 {/* Previous 10 button (visible only on larger screens) */}
                 <button
                     onClick={() => changePageBy10('previous')}
                     disabled={currentPage <= pagesToShow}
-                    className="px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200 hidden sm:inline"
+                    className={styles.tableStyles.tablePaginationForwordButton}
                     aria-label="Previous 10 pages"
                 >
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M14 7l-5 5 5 5V7z"></path></svg>
@@ -143,20 +140,19 @@ const PaginatedTable = () => {
                 <button
                     onClick={goToPrevious}
                     disabled={currentPage === 1}
-                    className="px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200"
+                    className={styles.tableStyles.tablePaginationPreviousButton}
                     aria-label="Previous page"
                 >
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7v14z"></path></svg>
                 </button>
 
                 {/* Page number buttons */}
-                <div className="flex items-center space-x-2 mb-2 sm:mb-0">
+                <div className={styles.tableStyles.tableCounterButtonsuttonsContainer}>
                     {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
                         <button
                             key={startPage + index}
                             onClick={() => changePage(startPage + index)}
-                            className={`px-3 py-2 text-xs sm:text-sm font-semibold rounded-lg transition duration-200 ${currentPage === startPage + index ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
-                            aria-label={`Page ${startPage + index}`}
+                            className={`${styles.tableStyles.tablePaginationCounterButtonAnimation} ${currentPage === startPage + index ? styles.tableStyles.tablePaginatinonbuttonText : styles.tableStyles.tablePaginationButtonChange}`} aria-label={`Page ${startPage + index}`}
                         >
                             {startPage + index}
                         </button>
@@ -167,7 +163,7 @@ const PaginatedTable = () => {
                 <button
                     onClick={goToNext}
                     disabled={currentPage === totalPages}
-                    className="px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200"
+                    className={styles.tableStyles.tablePaginationNextButton}
                     aria-label="Next page"
                 >
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7V5z"></path></svg>
@@ -177,7 +173,7 @@ const PaginatedTable = () => {
                 <button
                     onClick={() => changePageBy10('next')}
                     disabled={currentPage + pagesToShow > totalPages}
-                    className="px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200 hidden sm:inline"
+                    className={styles.tableStyles.tablePaginationForwordButton}
                     aria-label="Next 10 pages"
                 >
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"></path></svg>

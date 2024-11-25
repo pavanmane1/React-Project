@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchCurrencies, addCurrency, selectCurrencyData, editSelectedCurrency, editCurrencyapi, deleteCurrency, deleteSelectedCurrency } from '../slice/currencySlice';
-import { toast, ToastContainer, Bounce } from 'react-toastify';
+import { fetchCurrencies, resetPopups, addCurrency, selectCurrencyData, editSelectedCurrency, editCurrencyapi, deleteCurrency, deleteSelectedCurrency } from '../slice/currencySlice';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import currencyOptions from '../data/currencydata';
 import PaginatedTable from './pagination';
@@ -12,14 +12,50 @@ import styles from '../styles/styles';
 import CurrencyModal from '../Components/modal';
 import Modal from '../Components/modals/modal';
 import TextInputTopLabel from '../Components/Inputs/InputWithTopLabel';
-
+import PaginatedDataTable from '../Components/Tabels/PaginationTable';
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import ShowAlert from '../Components/Alert/ShowAlert';
 const CurrencyMaster = () => {
     const dispatch = useDispatch();
-    const { status, error, editCurrencydata, CurrencySelectionData, deleteCurrencyData, } = useSelector((state) => state.currency);
+    const { currencies, status, error, editCurrencydata, CurrencySelectionData, deleteCurrencyData, } = useSelector((state) => state.currency);
     const { id, currency, symbol, showpopup } = editCurrencydata;
     const { selectedCurrencyCode, selectedCurrencySymbol } = CurrencySelectionData;
     const { currencyId, showDeletePopup } = deleteCurrencyData;
-    let updatedData
+    const headings = ['id', 'Currency', 'Symbol', 'Actions'];
+
+    useEffect(() => {
+        if (status === 'idle') {
+            dispatch(fetchCurrencies());
+        }
+    }, [status, dispatch]);
+
+    const actions = [
+        {
+            icon: <FaEdit />,
+            onClick: (item) => oneditClicked(item),
+        },
+        {
+            icon: <FaTrashAlt />,
+            onClick: (item) => ondeleteClicked(item.id),
+        },
+    ];
+
+    const oneditClicked = (item) => {
+        dispatch(editSelectedCurrency({
+            id: item.id,
+            currency: item.currency,
+            symbol: item.symbol,
+            showpopup: true
+        }));
+    }
+
+    const ondeleteClicked = (id) => {
+        dispatch(deleteSelectedCurrency({
+            currencyId: id,
+            showDeletePopup: true
+        }));
+
+    }
 
     const handleChange = (e) => {
         const selectedCurrencyCode = e.target.value;
@@ -31,26 +67,10 @@ const CurrencyMaster = () => {
         }));
     };
 
-
-    const handleClose = () => {
-        dispatch(editSelectedCurrency({
-            showpopup: false
-        }));
-    };
     const handleSave = async (e) => {
         e.preventDefault();
         if (!selectedCurrencyCode || !selectedCurrencySymbol) {
-            toast.error('Please select a currency before saving.', {
-                position: 'top-right',
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'colored',
-                transition: Bounce,
-            });
+            ShowAlert("Please select a currency before saving.", 'error')
             return;
         }
 
@@ -61,64 +81,37 @@ const CurrencyMaster = () => {
 
         try {
             await dispatch(addCurrency(newCurrency)).unwrap();
-            toast.success(' New Currency Added Success!', {
-                position: 'top-right',
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'colored',
-                transition: Bounce,
-            });
+            ShowAlert('New Currency Added Success!', 'success')
             dispatch(selectCurrencyData({
                 selectedCurrencyCode: '',
                 selectedCurrencySymbol: ''
-
             }));
 
         } catch (error) {
-            toast.error(`Error: ${error}`, {
-                position: 'top-right',
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'colored',
-                transition: Bounce,
-            });
+            ShowAlert(`Error: ${error}`, 'error')
         }
     };
+
     const handleEditChange = useCallback((e) => {
         const { name, value } = e.target;
-
         const updatedData = {
             ...editCurrencydata, // Immutable state update
             [name]: value,
-        };
-
+        }
         // Basic validation
         if (!updatedData.currency || !updatedData.symbol) {
-            console.warn('Currency and Symbol are required!');
+            ShowAlert(`Currency and Symbol are required!`, 'warn')
             return;
         }
-
         // Dispatch updated data to Redux store
         dispatch(editSelectedCurrency(updatedData));
-
-        // Optionally, log the updated data, but be mindful to remove in production
-        console.log('Edited Data:', updatedData);
-    }, [dispatch, editCurrencydata]); // Use the dependencies carefully
+    }, [dispatch, editCurrencydata]);
 
     const handleEdit = async (e) => {
         e.preventDefault();
-
         // Prepare the updated data
         const updatedData = {
-            id, // Ensure the ID is included for updating
+            id,
             currency,
             symbol,
             showpopup: false, // Explicitly set showpopup to false
@@ -128,68 +121,32 @@ const CurrencyMaster = () => {
             // Dispatch the edit action to update the currency
             await dispatch(editCurrencyapi(updatedData)).unwrap();
             await dispatch(fetchCurrencies()).unwrap();
-            dispatch(editSelectedCurrency({ showpopup: false }));
-            toast.success('Currency Updated Successfully!', {
-                position: 'top-right',
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'colored',
-                transition: Bounce,
-            });
+            dispatch(resetPopups());
+            ShowAlert('Currency Updated Successfully!', 'success')
 
         } catch (error) {
             // Show error notification
-            toast.error(`Error: ${error}`, {
-                position: 'top-right',
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'colored',
-                transition: Bounce,
-            });
+            ShowAlert(`Error: ${error}`, 'error')
+
         }
     };
+
     const handleDelete = async (e) => {
         e.preventDefault();
         try {
             // Dispatch the edit action to update the currency
             await dispatch(deleteCurrency(currencyId)).unwrap();
             await dispatch(fetchCurrencies()).unwrap();
-            dispatch(deleteSelectedCurrency({ showDeletePopup: false }));
-            toast.success('Currency Deleted Successfully!', {
-                position: 'top-right',
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'colored',
-                transition: Bounce,
-            });
+            dispatch(resetPopups());
+            ShowAlert('Currency Deleted Successfully!', 'success')
 
         } catch (error) {
             // Show error notification
-            toast.error(`Error: ${error}`, {
-                position: 'top-right',
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'colored',
-                transition: Bounce,
-            });
+            ShowAlert(`Error: ${error}`, 'error')
+
         }
     }
+
     const handleCancel = () => {
         dispatch(selectCurrencyData({
             selectedCurrencyCode: '',
@@ -198,17 +155,17 @@ const CurrencyMaster = () => {
         }));
     };
 
-    if (status === 'failed') {
-        return <div>Error: {error}</div>;
-    }
+    const handleClose = () => {
+        dispatch(resetPopups());
+    };
 
     return (
         <div>
-            {console.log(showDeletePopup)}
 
-            {console.log(currencyId)}
             <div className={styles.utility.centerStyle}>
+
                 <div className={styles.utility.shadowContainer}>
+                    <h5 className='mb-3 font-semibold text-2xl text-black text-center'>Currency Master</h5>
                     <form className={styles.utility.formComponentSpacing} onSubmit={handleSave}>
                         <Dropdown
                             label="Currency"
@@ -227,8 +184,29 @@ const CurrencyMaster = () => {
                     </form>
                 </div>
             </div>
-            <PaginatedTable itemsPerPage={10} />
-            <ToastContainer />
+
+            {status === 'loading' ? (
+                <div>Loading...</div>
+            ) : status === 'succeeded' ? (
+                currencies.length > 0 ? (
+                    <PaginatedDataTable
+                        headings={headings}
+                        data={currencies.map((item) => ({
+                            id: item.id,
+                            currency: item.currency,
+                            symbol: item.symbol,
+                        }))}
+                        actions={actions}
+                        itemsPerPage={10} // Adjust as needed
+                    />
+                ) : (
+                    <div>No data available.</div>
+                )
+            ) : status === 'failed' ? (
+                <div>Error: {error}</div>
+            ) : (
+                <div>Unexpected state encountered.</div>
+            )}   <ToastContainer />
             {/* Conditionally Render the CurrencyModal */}
             {showpopup &&
                 <Modal

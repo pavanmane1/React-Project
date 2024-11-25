@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom'; // Import Outlet
-import { Sidebardata } from '../data/sidebarData';
+import { Sidebardata } from '../../data/sidebarData';
 import { MdManageAccounts } from "react-icons/md";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
-import logo from '../assets/images/logo/9dattaE.png';
+import logo from '../../assets/images/logo/9dattaE.png';
+
 const Navbar = () => {
     const [active, setActive] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);

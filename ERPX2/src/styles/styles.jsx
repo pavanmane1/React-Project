@@ -25,23 +25,28 @@ const utilityStyle = {
     dropdown: "text-black focus:outline-none w-5/6 p-2 bg-gray-200 border border-gray-400 focus:ring-gray-800 rounded-md"
 }
 
-const utilityStyles = {
-    flexCenter: "flex justify-center items-center",
-    fullWidth: "w-full",
-    fullHeight: "h-full",
-    padding: (size = 2) => `p-${size}`,
-    margin: (size = 2) => `m-${size}`,
-    textCenter: "text-center",
-    textRight: "text-right",
-    textLeft: "text-left",
-    displayNone: "hidden",
-    displayBlock: "block",
-    displayFlex: "flex",
-    displayInlineBlock: "inline-block",
-    transitionDefault: "transition duration-200 ease-in-out",
-    shadowDefault: "shadow-lg",
-    roundedDefault: "rounded-lg",
-    borderDefault: "border border-gray-300",
+const popupModalStyles = {
+    mainContainer: "relative z-50",
+    overlay: "fixed inset-0 bg-gray-800 bg-opacity-50 transition-opacity",
+    modelContainer: "fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-4",
+    modelHeaderContainer: "relative w-full max-w-md sm:max-w-lg lg:max-w-xl bg-white rounded-lg shadow-lg sm:my-8 p-6",
+    modelHearder: "flex justify-between items-center border-b border-gray-200 pb-4",
+    modelTitle: "text-lg font-semibold text-gray-900",
+    modelCloseButton: "text-gray-800 bg-gray-700 hover:text-gray-600 focus:outline-none rounded-full p-2",
+    modalContent: "py-6",
+    modelFooterContainer: "flex justify-end space-x-3",
+    modelFooterButton: "px-4 py-2 sm:w-1/5 md:w-1/5 bg-blue-600 text-white rounded-lg hover:bg-blue-700",
+}
+const cardStyle = {
+    cardContainerOnMediumSize: "block md:hidden",
+    cardContainer: "mb-4 p-4 border rounded-lg shadow-md hover:shadow-lg transition-all w-full",
+    cardContent: "flex justify-between items-center text-xs",
+    cardActionContainer: "flex space-x-2 justify-center items-center",
+    cardActionButton: "p-2 bg-gray-500 text-blue-500 rounded-lg hover:text-blue-700",
+    cardButtonText: "text-sm",
+
+    cardContentHeading: "text-sm font-semibold text-gray-700",
+    cardContentText: "text-sm text-gray-600",
 };
 
 // Layout styles
@@ -84,13 +89,25 @@ const formStyles = {
 
 // Table styles
 const tableStyles = {
-    tableContainer: "p-4 mt-2 bg-white rounded-lg shadow-lg min-w-1/3 min-h-1/2",
-    table: "min-w-full bg-white rounded-lg shadow-md border-collapse",
+    tableContainerStyle: "p-4 mt-2 bg-white rounded-lg shadow-lg min-w-1/3 min-h-1/2",
+    table: "min-w-full bg-white rounded-lg shadow-md border-collapse overflow-hidden hidden md:table",
     tableHeader: "bg-gray-100 border-b",
+    teableheadingText: "py-2 px-4 text-center text-sm font-semibold text-gray-700 border",
     tableRow: "border-b hover:bg-gray-50 transition-colors duration-200",
-    tableCell: "py-2 px-4 text-center text-sm text-gray-700 border",
+    tableCellTd: "py-2 px-4 text-center text-sm text-gray-950 border",
     tableAction: "flex space-x-2 justify-center items-center",
+    tableActionButtonText: "text-sm",
     tableActionButtons: "flex items-center justify-center p-2 rounded-lg bg-gray-500 text-blue-500 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out shadow-md hover:shadow-lg active:scale-95",
+    tablePaginationContainer: " mt-6 flex flex-wrap items-center justify-center space-x-2",
+    tablePaginationPreviousButton: "px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200",
+    tablePaginationForwordButton: "px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200 hidden sm:inline",
+    tableCounterButtonsuttonsContainer: "flex items-center space-x-2 mb-2 sm:mb-0",
+    tablePaginationCounterButtonAnimation: "px-3 py-2 text-xs sm:text-sm font-semibold rounded-lg transition duration-200",
+    tablePaginationCounteButtons: "bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300",
+    tablePaginatinonbuttonText: "bg-blue-600 text-white",
+    tablePaginationButtonChange: "bg-gray-200 text-gray-800 hover:bg-gray-300",
+    tablePaginationNextButton: "px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200"
+
 };
 
 // Button styles
@@ -103,7 +120,8 @@ const buttonStyles = {
 
 // Modal styles
 const modalStyles = {
-    overlay: "fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50",
+    overlay: "relative z-50",
+    modelContainer: "fixed inset-0 bg-gray-800 bg-opacity-50 transition-opacity",
     modalContent: "bg-white rounded-lg p-6 shadow-lg",
     closeButton: "absolute top-0 right-0 p-2 text-gray-500 hover:text-red-500",
 };
@@ -126,7 +144,9 @@ const helperStyles = {
 };
 
 const styles = {
-    utility: utilityStyle
-
+    utility: utilityStyle,
+    tableStyles: tableStyles,
+    popupModalStyles: popupModalStyles,
+    cardStyle: cardStyle
 };
 export default styles;
