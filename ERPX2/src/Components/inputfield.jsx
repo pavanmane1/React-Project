@@ -1,6 +1,6 @@
 import React from 'react';
 
-const InputField = ({ id, name, type, placeholder, ariaLabel, autoComplete }) => (
+const InputField = ({ id, name, type, onChange, value, placeholder, ariaLabel, autoComplete }) => (
     <div >
         <label htmlFor={id} className="text-gray-900 font-medium block mb-2">
             {ariaLabel}
@@ -9,6 +9,8 @@ const InputField = ({ id, name, type, placeholder, ariaLabel, autoComplete }) =>
             type={type}
             id={id}
             name={name}
+            onChange={onChange}
+            value={value}
             placeholder={placeholder}
             autoComplete={autoComplete}
             className="w-full p-2 border text-black border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-150"

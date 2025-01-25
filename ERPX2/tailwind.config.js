@@ -11,6 +11,16 @@ export default {
       textShadow: {
         'custom': '2px 2px 4px rgba(0, 0, 0, 0.3)', // Add your shadow styles here
       },
+      animation: {
+        fadeIn: 'fadeIn 1.5s ease-in-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 },
+        },
+      },
+
       colors: {
         primary: '#004085', // Define your primary color
         secondary: '#0056b3', // Define your secondary color
